@@ -1,18 +1,20 @@
 import { quotes } from "./src/data/quotes.js";
-import { initFavourites } from "./src/handlers/favouritesHandler.js";
-import { applyQuote, handleQuote } from "./src/handlers/quotesHandler.js";
-import { bindFavouriteClick } from "./src/ui/quoteView.js";
-import { loadCurrentQuoteId } from "./src/utils/storage.js";
+import { QuotesApp } from "./src/app/QuotesApp.js";
+import { QuoteService } from "./src/services/QuoteService.js";
+import { StorageService } from "./src/services/StorageService.js";
+import { FavouritesView } from "./src/views/FavouritesView.js";
+import { QuoteView } from "./src/views/QuoteView.js";
 
-const generateBtn = document.getElementById("generate-btn");
+const storageService = new StorageService();
+const quoteService = new QuoteService(quotes);
+const quoteView = new QuoteView();
+const favouritesView = new FavouritesView();
 
-initFavourites(quotes, bindFavouriteClick);
+const app = new QuotesApp({
+  quoteService,
+  storageService,
+  quoteView,
+  favouritesView,
+});
 
-const storedId = loadCurrentQuoteId();
-
-if (storedId) {
-  const realQuote = quotes.find((q) => q.id === storedId);
-  applyQuote(realQuote);
-}
-
-generateBtn.addEventListener("click", () => handleQuote(quotes));
+app.init();
