@@ -1,11 +1,18 @@
 import { STORAGE_KEYS } from "../constants/storageKeys.js";
 
 export class StorageService {
-  load(key) {
+  load(key, defaultValue = null) {
     try {
-      return JSON.parse(localStorage.getItem(key)) || [];
+      const rawValue = localStorage.getItem(key);
+
+      if (rawValue === null) {
+        return defaultValue;
+      }
+
+      return JSON.parse(rawValue);
     } catch (error) {
       console.error(`Failed to load data for key "${key}":`, error);
+      return defaultValue;
     }
   }
 
@@ -21,25 +28,30 @@ export class StorageService {
     }
   }
 
-  getFavouriteIds() {
-    return this.load(STORAGE_KEYS.FAVOURITES).map(Number);
+  getFavourites() {
+    return this.load(STORAGE_KEYS.FAVOURITES, []);
   }
 
   isFavouriteId(id) {
-    return this.getFavouriteIds().includes(id);
+    return this.getFavourites().some(
+      (quote) => String(quote.id) === String(id),
+    );
   }
 
-  addFavourite(id) {
+  addFavourite(quote) {
     try {
-      const ids = this.getFavouriteIds();
-      const numId = Number(id);
+      const quotes = this.getFavourites();
 
-      if (!ids.includes(numId)) {
-        ids.push(numId);
-        this.save(STORAGE_KEYS.FAVOURITES, ids);
+      const isExists = quotes.some(
+        (favQuote) => String(favQuote.id) === String(quote.id),
+      );
+
+      if (!isExists) {
+        quotes.push(quote);
+        this.save(STORAGE_KEYS.FAVOURITES, quotes);
       }
 
-      return ids;
+      return quotes;
     } catch (error) {
       console.error("Failed to add favourites:", error);
     }
@@ -47,26 +59,25 @@ export class StorageService {
 
   removeFavourite(id) {
     try {
-      const numId = Number(id);
+      const quotes = this.getFavourites();
 
-      const ids = this.getFavouriteIds();
+      const filteredQuotes = quotes.filter(
+        (quote) => String(quote.id) !== String(id),
+      );
 
-      const filteredIds = ids.filter((favId) => favId !== numId);
+      this.save(STORAGE_KEYS.FAVOURITES, filteredQuotes);
 
-      this.save(STORAGE_KEYS.FAVOURITES, filteredIds);
-
-      return filteredIds;
+      return filteredQuotes;
     } catch (error) {
       console.error("Failed to remove favourites:", error);
     }
   }
 
-  saveCurrentQuoteId(id) {
-    this.save(STORAGE_KEYS.CURRENT_QUOTE, Number(id));
+  saveCurrentQuote(quote) {
+    this.save(STORAGE_KEYS.CURRENT_QUOTE, quote);
   }
 
-  loadCurrentQuoteId() {
-    const id = this.load(STORAGE_KEYS.CURRENT_QUOTE);
-    return id || null;
+  loadCurrentQuote() {
+    return this.load(STORAGE_KEYS.CURRENT_QUOTE, null);
   }
 }

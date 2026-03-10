@@ -6,6 +6,7 @@ export class QuotesApp {
     this.favouritesView = favouritesView;
 
     this.generateBtn = document.getElementById("generate-btn");
+    this.generateBtnViaApi = document.getElementById("generate-btn-api");
   }
 
   init() {
@@ -13,17 +14,19 @@ export class QuotesApp {
     this.renderFavourites();
 
     this.generateBtn.addEventListener("click", () => this.showQuote());
+    this.generateBtnViaApi.addEventListener("click", () =>
+      this.showQuote(true),
+    );
 
     this.quoteView.bindFavouriteClick(() => this.toggleFavourite());
   }
 
   restoreCurrentQuote() {
-    const storedId = this.storageService.loadCurrentQuoteId();
+    const storedQuote = this.storageService.loadCurrentQuote();
 
-    if (storedId) {
-      const realQuote = this.quoteService.getQuoteById(storedId);
-      this.applyQuote(realQuote);
-    }
+    if (!storedQuote) return;
+
+    this.applyQuote(storedQuote);
   }
 
   applyQuote(quote) {
@@ -31,7 +34,7 @@ export class QuotesApp {
 
     this.quoteService.setCurrentQuote(quote);
 
-    this.storageService.saveCurrentQuoteId(quote.id);
+    this.storageService.saveCurrentQuote(quote);
 
     this.quoteView.renderQuote(quote);
     this.quoteView.renderFavouriteButton(
@@ -39,8 +42,14 @@ export class QuotesApp {
     );
   }
 
-  showQuote() {
-    const quote = this.quoteService.getRandomQuote();
+  async showQuote(isApi = false) {
+    let quote;
+
+    if (isApi) {
+      quote = await this.quoteService.getRandomQuoteViaApi();
+    } else {
+      quote = this.quoteService.getRandomQuote();
+    }
 
     this.applyQuote(quote);
   }
@@ -55,7 +64,7 @@ export class QuotesApp {
     if (isFavourite) {
       this.storageService.removeFavourite(currentQuote.id);
     } else {
-      this.storageService.addFavourite(currentQuote.id);
+      this.storageService.addFavourite(currentQuote);
     }
 
     this.quoteView.renderFavouriteButton(!isFavourite);
@@ -65,7 +74,7 @@ export class QuotesApp {
   removeFromFavourites(id) {
     const currentQuote = this.quoteService.getCurrentQuote();
 
-    if (currentQuote?.id === id) {
+    if (String(currentQuote?.id) === String(id)) {
       this.quoteView.renderFavouriteButton(false);
     }
 
@@ -74,9 +83,7 @@ export class QuotesApp {
   }
 
   renderFavourites() {
-    const favouriteIds = this.storageService.getFavouriteIds();
-
-    const favourites = this.quoteService.getFavouriteQuotes(favouriteIds);
+    const favourites = this.storageService.getFavourites();
 
     this.favouritesView.render(favourites, (id) =>
       this.removeFromFavourites(id),
