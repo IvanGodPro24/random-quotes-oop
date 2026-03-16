@@ -35,7 +35,7 @@ export class QuoteService {
 
   async getRandomQuoteViaApi() {
     try {
-      const response = await fetch("https://api.quotable.io/random");
+      const response = await fetch("https://api.quotable.io/quotes/random");
 
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
@@ -43,10 +43,12 @@ export class QuoteService {
 
       const data = await response.json();
 
+      const { _id, content, author } = data[0];
+
       return {
-        id: data._id,
-        text: data.content,
-        author: data.author,
+        id: _id,
+        text: content,
+        author,
       };
     } catch (error) {
       console.error("Failed to fetch quote from API:", error);
