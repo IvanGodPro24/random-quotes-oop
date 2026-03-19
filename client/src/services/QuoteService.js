@@ -55,4 +55,21 @@ export class QuoteService {
       return null;
     }
   }
+
+  async getRandomQuoteViaOwnApi() {
+    try {
+      const response = await fetch("http://localhost:3000/quotes/random");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch quote from own API:", error);
+      return null;
+    }
+  }
 }

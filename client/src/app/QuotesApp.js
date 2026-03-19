@@ -7,16 +7,20 @@ export class QuotesApp {
 
     this.generateBtn = document.getElementById("generate-btn");
     this.generateBtnViaApi = document.getElementById("generate-btn-api");
+    this.generateBtnViaOwnApi = document.getElementById("generate-btn-own");
   }
 
   init() {
     this.restoreCurrentQuote();
     this.renderFavourites();
 
-    this.generateBtn.addEventListener("click", () => this.showQuote());
+    this.generateBtn.addEventListener("click", () => this.showQuote("local"));
     this.generateBtnViaApi.addEventListener("click", () =>
-      this.showQuote(true),
+      this.showQuote("api"),
     );
+    this.generateBtnViaOwnApi.addEventListener("click", () => {
+      this.showQuote("own-api");
+    });
 
     this.quoteView.bindFavouriteClick(() => this.toggleFavourite());
   }
@@ -42,11 +46,13 @@ export class QuotesApp {
     );
   }
 
-  async showQuote(isApi = false) {
+  async showQuote(source = "local") {
     let quote;
 
-    if (isApi) {
+    if (source === "api") {
       quote = await this.quoteService.getRandomQuoteViaApi();
+    } else if (source === "own-api") {
+      quote = await this.quoteService.getRandomQuoteViaOwnApi();
     } else {
       quote = this.quoteService.getRandomQuote();
     }

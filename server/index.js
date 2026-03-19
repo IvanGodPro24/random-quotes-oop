@@ -1,9 +1,16 @@
 import express from "express";
+import cors from "cors";
 import { quotes } from "./data/quotes.js";
 
 const app = express();
 
 const PORT = 3000;
+
+const corsOptions = {
+  origin: "http://127.0.0.1:8080",
+};
+
+app.use(cors(corsOptions));
 
 let previousQuoteId;
 
@@ -25,8 +32,8 @@ function getRandomQuote(quotes, previousId) {
 }
 
 app.get("/quotes/random", (req, res) => {
-    const quote = getRandomQuote(quotes, previousQuoteId);
-    
+  const quote = getRandomQuote(quotes, previousQuoteId);
+
   if (!quote) {
     return res.status(404).json({ message: "Quotes not found" });
   }
