@@ -1,3 +1,5 @@
+import { API_URL, PUBLIC_API_URL } from "../config.js";
+
 export class QuoteService {
   constructor(quotes = []) {
     this.quotes = quotes;
@@ -35,7 +37,7 @@ export class QuoteService {
 
   async getRandomQuoteViaApi() {
     try {
-      const response = await fetch("https://api.quotable.io/quotes/random");
+      const response = await fetch(`${PUBLIC_API_URL}/quotes/random`);
 
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
@@ -58,7 +60,7 @@ export class QuoteService {
 
   async getRandomQuoteViaOwnApi() {
     try {
-      const response = await fetch("http://localhost:3000/quotes/random");
+      const response = await fetch(`${API_URL}/quotes/random`);
 
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
