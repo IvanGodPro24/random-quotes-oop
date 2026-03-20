@@ -48,6 +48,8 @@ The backend is a simple Express server that:
 GET /quotes/random
 ```
 
+---
+
 ## 🧑‍💻 Installation & Run
 
 ### 1. Clone the repository
@@ -69,7 +71,7 @@ Server will run on: `http://localhost:3000`
 
 ### 3. Run client
 
-Just open **index.html** using **Live Server** (recommended).:
+Just open **index.html** using **Live Server** (recommended):
 
 ```bash
 npx live-server client
@@ -81,10 +83,11 @@ npx live-server client
 
 The app has 3 quote sources:
 
-| Button | Source |
-| Generate Quote | Local array |
-| Generate Quote via API | Public API (quotable.io) |
-| Generate Quote via Own API | Your Express server |
+| Button                     | Source                   |
+|----------------------------|--------------------------|
+| Generate Quote             | Local array              |
+| Generate Quote via API     | Public API (quotable.io) |
+| Generate Quote via Own API | Your Express server      |
 
 ---
 
@@ -124,3 +127,13 @@ This project demonstrates:
 - Service-based architecture
 - Clean handling of async API requests
 - State persistence
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+> Made with ❤️ by [IvanGodPro24](https://github.com/IvanGodPro24)
