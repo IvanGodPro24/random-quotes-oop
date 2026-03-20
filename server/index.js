@@ -7,7 +7,10 @@ const app = express();
 const PORT = 3000;
 
 const corsOptions = {
-  origin: "http://127.0.0.1:8080",
+  origin: [
+    "http://127.0.0.1:8080",
+    "https://random-quotes-oop-front-5r3c.onrender.com",
+  ],
 };
 
 app.use(cors(corsOptions));
